@@ -256,6 +256,43 @@ ioServer.on('connection', (socket) => {
  * SERVER BROADCAST > CLIENT SUCHT NACH BROADCAST!
  *
  *
+ * TODO NACH RÜCKSPRACHE 26.09.2022
+ * - Speicherzielort der Gallery!
+ * Möglichkeiten: Spiegelung oder direkt auf USB lagern
+ * Download direkt auf anderes USB Gerät wenigstens Testen (tempo und zuverlässigkeit)
+ * Gallerie auf Knopfdruck auf USB übertragen
+ *
+ * Client Modus: Text auf Bildschirm bearbeiten (Statt Auslöser Drücken, "guck in die kamera" schreiben)
+ * Client Modus: Animierter Buzzer mit groben bereich drum rum zum tappen
+ * Client Modus: Andere Option Auslöser + "Macht euch bereit"-text +  Preview ohne countdown
+ *
+ * Countdown Zeit einstellbar / Andere Countdown Style (Zahlen zoomen rein / raus über die kamera hinweg)
+ * nth: Bei Countdown Textbasierten Styles: 0-Text anpassbar (z.B. "cheese" statt 0)
+ * nth: Bildschirm Weiß flaschen lassen bei Foto (0) (Ein / ausschaltbar)
+ *
+ * Dashboard:
+ * - Echter speicherplatzverbrauch wichtig
+ * sonstige statistiken erstmal entfernen. neue Statistiken: nth
+ * - Speichergröße pro Gallerie anzeigen
+ *
+ * Backend Checks:
+ *  - Speicherplatz check des PI
+ *  - Verbindung zum Server (PI) in der Website prüfen, und Meldung geben wenn nicht erreichbar
+ *  - Sonstige Hardware checks (z.B ob konfiguriertes USB noch angeschlossen ist)
+ *  - Wenn Fotos nicht gemacht werden konnten besser prüfen und Fehlerrückmeldung
+ *
+ *  Anzeigen von Fehlern DEUTLICH auf dem Bildschirm (je nachdem ob die funktionaltität eingeschränkt ist) Über den ganzen bildschirm
+ *
+ *  Animationen:
+ *  IN-Animation und Out-Animationen erkennen und davor, bzw,. danach nicht anzeigen
+ *  bzw. rückmeldung aus der Komponente "animationFinished" handler
+ *
+ *
+ * Client als APP zur verfügung stellen inkl. broadcast erkennung Server (gleicher IP Kreis)
+ * Benachrichtigungen aus dem Background (z.B. kamera nicht online, server nicht erreicht, andere fehlermeldungen vom backend)
+ * Schlimme benachrictigungen (keine kamera z.B.) in vollbild sobald devmode beendet (und im client mode )
+ *
+ *
  */
 
 app.use(express.static('static/frontend', {

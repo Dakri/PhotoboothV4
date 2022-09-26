@@ -3,4 +3,4 @@ WORKDIR /camera
 EXPOSE 3000
 #CMD /bin/bash
 
-CMD ./boot.sh
+CMD sh ./boot.sh
