@@ -11,8 +11,6 @@ RUN ./configure
 RUN make
 RUN make install
 RUN ldconfig
-
-
 RUN npm -g install nodemon
 
 

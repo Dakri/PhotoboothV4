@@ -93,7 +93,6 @@ echo "set mouse-=a"| sudo tee -a /root/.vimrc
 #INSTALL DOCKER
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
-#apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 sudo usermod -aG docker pi
 
@@ -111,7 +110,8 @@ rm -rf get-docker.sh
 
 sudo systemctl enable docker
 
-sudo apt install docker-compose
+sudo apt update
+sudo apt install -y docker-compose
 
 cd /home/pi/photobooth/docker
 docker-compose build
@@ -141,6 +141,8 @@ sudo systemctl enable photobooth-server
 
 sudo systemctl start photobooth-server
 
+echo ""
+echo ""
 echo "Die PHOTOBOOTH installation ist abgeschlossen, der PI starten nun in 20 Sekunden neu."
 echo "-------------------------"
 echo "Wie komm wieder an den PI?"
