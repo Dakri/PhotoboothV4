@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  photobooth_base:
+    image: dpeters/photobooth_base
+    build: ./base
+    privileged: true
+  photobooth_install:
+    image: dpeters/photobooth_gphoto
+    build: ./gphoto
+    privileged: true

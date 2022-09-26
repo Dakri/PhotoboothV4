@@ -1,0 +1,23 @@
+{
+  "name": "photobooth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.8",
+    "echarts": "^5.3.3",
+    "express": "^4.17.2",
+    "fs": "^0.0.1-security",
+    "md5": "^2.3.0",
+    "nconf": "^0.12.0",
+    "path": "^0.12.7",
+    "promise-exec": "^0.1.0",
+    "socket.io": "^4.5.2"
+  }
+}

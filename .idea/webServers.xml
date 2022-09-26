@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="46e9c049-6bf6-408e-aa7e-88c4830a2462" name="boothpi" url="http://192.168.42.158:3000">
+        <fileTransfer rootFolder="/home/pi/photobooth" accessType="SFTP" host="192.168.42.158" port="22" sshConfigId="5d983e0c-ccfc-4578-8463-1685435f7986" sshConfig="pi@192.168.42.158:22 password">
+          <advancedOptions>
+            <advancedOptions controlEncoding="utf-8" dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,16 @@
+version: "3.3"
+services:
+  camera:
+    volumes:
+      - type: bind
+        source: ./src/camera
+        target: /camera
+      - type: bind
+        source: ./gallery
+        target: /gallery
+      - /dev/bus/usb:/dev/bus/usb
+    build: ./docker/camera
+    privileged: true
+    ports:
+      - "3000:3000"
+    network_mode: 'host'

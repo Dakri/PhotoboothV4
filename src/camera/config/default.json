@@ -1,0 +1,27 @@
+{
+  "app": {
+    "password": ""
+  },
+  "settings": {
+    "password": "photobooth"
+  },
+  "gallery": {
+    "password": "photobooth",
+    "resolution": "80px"
+  },
+  "camera": {
+    "triggerDelay": -400,
+    "countdown": 3,
+    "previewTimeout": 5,
+    "storageTarget": 0,
+    "previewResolution": {
+      "w": "1280px"
+    }
+  },
+  "usb": {
+
+  },
+  "clients": {
+
+  }
+}

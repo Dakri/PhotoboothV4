@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Photobooth V4</string>
+    <string name="title_activity_main">Photobooth V4</string>
+    <string name="package_name">org.dpeters.photobooth.app</string>
+    <string name="custom_url_scheme">org.dpeters.photobooth.app</string>
+</resources>

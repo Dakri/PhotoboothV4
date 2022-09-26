@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="boothpi" autoUploadExternalChanges="true">
+    <serverData>
+      <paths name="boothpi">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/src/camera/node_modules" />
+            <excludedPath path="/src/camera/node_modules" />
+            <excludedPath local="true" path="$PROJECT_DIR$/src/web/node_modules" />
+            <excludedPath path="/src/web/node_modules" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
