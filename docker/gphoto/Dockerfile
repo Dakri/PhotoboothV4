@@ -2,7 +2,7 @@ FROM dpeters/photobooth_base
 WORKDIR /src
 COPY . .
 RUN apt-get update
-RUN ["apt-get", "install", "-y", "vim", "libexecs-dev", "libjpeg-dev", "libgphoto2-dev", "gphoto2"]
+RUN ["apt-get", "install", "-y", "vim", "libexecs-dev", "libjpeg-dev", "libgphoto2-dev", "gphoto2", "libudev-dev"]
 
 
 WORKDIR /src/epeg

@@ -39,6 +39,9 @@ export const useGalleryStore = defineStore('gallery', {
     removeGallery(galleryEntry) {
       this.socketStore.emit('removeGallery', galleryEntry)
    },
+    clearGallery(galleryEntry) {
+      this.socketStore.emit('clearGallery', galleryEntry)
+   },
    addGallery(galleryEntry) {
       this.socketStore.emit('addGallery', galleryEntry)
    },
@@ -47,6 +50,12 @@ export const useGalleryStore = defineStore('gallery', {
     },
     receiveGalleryImages(data){
       this.galleryImages = data
+    },
+    setGalleryUsbTarget(galleryTarget, usbTarget) {
+      this.socketStore.emit('setGalleryUsbTarget', {galleryTarget, usbTarget})
+    },
+    copyGalleryToUsbTarget(galleryTarget, usbTarget) {
+      this.socketStore.emit('copyGalleryToUsbTarget', {galleryTarget, usbTarget})
     }
   },
 });

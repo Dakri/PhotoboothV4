@@ -12,8 +12,10 @@ export const usePageStore = defineStore('page', {
       fullscreen: false,
       devMode: useStorage('client-devMode', false),
       mode: useStorage('client-mode', 'full'),
-      showHeader: useStorage('client-showHeader', true),
-      showMenu: useStorage('client-showMenu', true),
+      showHeader:  true,
+      // showHeader: useStorage('client-showHeader', true),
+      showMenu: true,
+      // showMenu: useStorage('client-showMenu', true),
       leftDrawerOpen:useStorage('client-leftDrawerOpen', false),
       serverSearch: false
     }

@@ -1,13 +1,15 @@
 <template>
   <q-page style="background-color: #ffffff;">
-    <div class="full-width  q-pa-lg"  >
+    <div class="full-width  q-pa-lg"  style="max-height: calc(100vh - 50px); overflow: auto;" >
       <div>
         <h4>{{currentGallery.name}}<br> <small>({{currentGallery.photos}} Fotos)</small></h4>
       </div>
       <q-card >
-        <q-card-section class="row wrap q-gutter-lg" style="max-height: calc(100vh - 20em); overflow: auto;">
-        <div  v-for="(src, index) in galleryImagesSrcThumbnails" :key="index" style="cursor: pointer"  @click=" () => showImg(index)">
+        <q-card-section class="row wrap q-gutter-lg">
+        <div  v-for="(src, index) in galleryImagesSrcThumbnails" :key="index" style="cursor: pointer; position: relative"  @click=" () => showImg(index)">
+          <span style="position: absolute; top:0.5em; left: 0.5em; background-color: #33333388; color: #ffffff; padding: 0.5em; font-weight: bold">{{index}}</span>
           <img  :src="src"  />
+<!--          {{src}}-->
         </div>
         </q-card-section>
       </q-card>

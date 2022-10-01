@@ -17,7 +17,6 @@
           <q-tab-panels
             v-model="tab"
             animated
-            swipeable
             horizontal
             infinite
             transition-prev="jump-right"
@@ -49,24 +48,25 @@
               </div>
               <br>
               <div class="text-h4 q-mb-md">Galerien</div>
-              <q-dialog v-model="confirmDelete" persistent>
-                <q-card>
-                  <q-card-section class="row items-center">
-                    <q-avatar icon="trash" color="primary" text-color="white" />
-                    <span class="q-ml-sm">Gallerie <b>{{toDeleteGallery.name}}</b> wirklich löschen?</span>
-                  </q-card-section>
-
-                  <q-card-actions align="right">
-                    <q-btn flat label="Abbrechen" color="primary" v-close-popup />
-                    <q-btn flat label="Löschen" color="primary" @click="removeGalleryConfirmed(toDeleteGallery)" v-close-popup />
-                  </q-card-actions>
-                </q-card>
-              </q-dialog>
               <div class="q-gutter-md">
                 <q-list class="gallery-list">
                   <q-item v-if="galleryList.length <= 0">
                     <q-item-section class="col-6" >
                       Noch keine Gallery vorhanden, bitte über das "+" erstellen
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section class="col-6" >
+                      <q-item-label>Name + Details</q-item-label>
+                    </q-item-section>
+                    <q-item-section >
+                      <q-item-label> Aktiv </q-item-label>
+                    </q-item-section>
+                    <q-item-section >
+                      <q-item-label> USB Ziel </q-item-label>
+                    </q-item-section>
+                    <q-item-section >
+                      <q-item-label> Aktion </q-item-label>
                     </q-item-section>
                   </q-item>
                   <q-item  v-for="galleryEntry in galleryList" :key="galleryEntry.id">
@@ -80,6 +80,9 @@
                         <q-icon name="check_circle" size="md"  v-if="!galleryEntry.active" disabled="true" color="gray" />
                       </q-item-label>
                     </q-item-section>
+                    <q-item-section >
+                      <q-item-label><span v-if="galleryEntry.usbTarget">{{ galleryEntry.usbTarget.dev }} <i>({{ galleryEntry.usbTarget.size }})</i></span>  </q-item-label>
+                    </q-item-section>
                     <q-item-section class="text-right">
                       <q-item-label>
                         <q-btn color="primary" icon="menu">
@@ -92,9 +95,15 @@
                                 <q-item-section>Aktivieren</q-item-section>
                               </q-item>
                               <q-item clickable>
-                                <q-item-section>USB Archiv</q-item-section>
+                                <q-item-section @click="configureGalleryUsb(galleryEntry)"  v-close-popup>USB für Kopie konfigurieren</q-item-section>
+                              </q-item>
+                              <q-item clickable>
+                                <q-item-section  @click="copyGalleryUsb(galleryEntry)" v-close-popup >Auf USB Downloaden</q-item-section>
                               </q-item>
                               <q-separator />
+                              <q-item clickable>
+                                <q-item-section @click="clearGallery(galleryEntry)" v-close-popup>Leeren</q-item-section>
+                              </q-item>
                               <q-item clickable>
                                 <q-item-section @click="removeGallery(galleryEntry)" v-close-popup>Löschen</q-item-section>
                               </q-item>
@@ -113,6 +122,63 @@
                     </q-item-section>
                   </q-item>
                 </q-list>
+                <q-dialog v-model="confirmDelete" persistent>
+                  <q-card>
+                    <q-card-section class="row items-center">
+                      <q-avatar icon="trash" color="primary" text-color="white" />
+                      <span class="q-ml-sm">Gallerie <b>{{toDeleteGallery.name}}</b> wirklich löschen?</span>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn flat label="Abbrechen" color="primary" v-close-popup />
+                      <q-btn flat label="Löschen" color="primary" @click="removeGalleryConfirmed(toDeleteGallery)" v-close-popup />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+                <q-dialog v-model="confirmClear" persistent>
+                  <q-card>
+                    <q-card-section class="row items-center">
+                      <q-avatar icon="trash" color="primary" text-color="white" />
+                      <span class="q-ml-sm">Gallerie <b>{{toClearGallery.name}}</b> wirklich leeren?</span>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn flat label="Abbrechen" color="primary" v-close-popup />
+                      <q-btn flat label="Leeren" color="primary" @click="clearGalleryConfirmed(toClearGallery)" v-close-popup />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+                <q-dialog v-model="showGalleryUsbDialog" persistent>
+                  <q-card>
+                    <q-card-section class="row items-center">
+                      <usb-devices v-model:devices="usb" >
+                        <template #action="usbDevice">
+                          <q-btn  @click="configureGalleryUsbConfirmed(usbDevice)" v-close-popup>Wählen</q-btn>
+                        </template>
+                      </usb-devices>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn flat label="Abbrechen" color="primary" v-close-popup />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
+
+                <q-dialog v-model="showCopyGalleryUsbDialog" persistent>
+                  <q-card>
+                    <q-card-section class="row items-center">
+                      <usb-devices v-model:devices="usb" >
+                        <template #action="usbDevice">
+                          <q-btn  @click="copyGalleryUsbConfirmed(usbDevice)" v-close-popup>Kopieren</q-btn>
+                        </template>
+                      </usb-devices>
+                    </q-card-section>
+
+                    <q-card-actions align="right">
+                      <q-btn flat label="Abbrechen" color="primary" v-close-popup />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
                 <q-dialog v-model="showGalleryDialog">
                   <q-card>
                     <q-card-section>
@@ -125,9 +191,12 @@
                       <q-checkbox v-model:model-value="newGallery.active" label="Beim erstellen aktiv"></q-checkbox>
                     </q-card-section>
                     <q-card-section>
-                      <q-select v-model:model-value="newGallery.usb" label="Speicherziel (USB)" :options="[{label: '/mnt/usb1', value:'/mnt/usb1'}]">
+                      <q-select v-model="newGallery.usbTarget" label="Speicherziel (USB)" :options="usbOptions"
+                                emit-value
+                                map-options>
                       </q-select>
                     </q-card-section>
+                    {{newGallery}}
                     <q-card-section>
                       <div class="row q-gutter-md">
                         <q-btn @click="confirmNewGallery()" color="positive">Erstellen</q-btn>
@@ -178,10 +247,12 @@ export default {
     const gallery = computed( () => { return settingsComp.value.gallery||{} })
     const camera = computed( () => { return settingsComp.value.camera||{} })
     const preview = computed( () => { return camera.value.preview||{} })
-    const usb = ref({list: [
-        {name: '/mnt/usb1', type:'dynamicStorage'},
-        {name: '/mnt/usb2', type:'none'},
-      ]})//computed( () => { return settingsComp.value.usb||{} })
+    const usb = computed( () => { return settingsComp.value.availableUsb||[] })
+    const usbOptions = computed( () => {
+      return Object.values(settingsComp.value.availableUsb).map( usbOption => { return {
+        label: `${usbOption.dev} (${usbOption.size})`, value: usbOption
+      }})
+    })
     const clients = computed( () => { return settingsComp.value.clients||{} })
     const newGallery = ref({name: '', active: false, usb: ''})
 
@@ -219,17 +290,56 @@ export default {
     }
 
     const confirmDelete = ref(false)
+    const confirmClear = ref(false)
     const toDeleteGallery = ref({})
+    const toClearGallery = ref({})
 
     const removeGallery = (gallery) => {
       toDeleteGallery.value = gallery
       confirmDelete.value = true
     }
+    const clearGallery = (gallery) => {
+      toClearGallery.value = gallery
+      confirmClear.value = true
+    }
     const removeGalleryConfirmed = (gallery) => {
       galleryStore.removeGallery(gallery)
       galleryStore.requestGallery()
     }
+
+    const clearGalleryConfirmed = (gallery) => {
+      galleryStore.clearGallery(gallery)
+      galleryStore.requestGallery()
+    }
+
+
     galleryStore.requestGallery()
+
+
+    const showGalleryUsbDialog = ref(false)
+    const currentUsbDialogGallery = ref({})
+    const configureGalleryUsb =  (galleryEntry) =>{
+      currentUsbDialogGallery.value = galleryEntry
+      showGalleryUsbDialog.value = true
+    }
+
+    const configureGalleryUsbConfirmed =  (usbTarget) =>{
+      galleryStore.setGalleryUsbTarget(currentUsbDialogGallery.value, usbTarget)
+      currentUsbDialogGallery.value = {}
+      galleryStore.requestGallery()
+    }
+
+    const showCopyGalleryUsbDialog = ref(false)
+    const currentCopyToUsbGallery = ref({})
+    const copyGalleryUsb =  (galleryEntry) =>{
+      currentCopyToUsbGallery.value = galleryEntry
+      showCopyGalleryUsbDialog.value = true
+    }
+    const copyGalleryUsbConfirmed =  (usbTarget) =>{
+      galleryStore.copyGalleryToUsbTarget(currentCopyToUsbGallery.value, usbTarget)
+      currentCopyToUsbGallery.value = {}
+      galleryStore.requestGallery()
+    }
 
     return {
       tab: ref('gallery'),
@@ -241,6 +351,7 @@ export default {
       gallery,
       camera,
       usb,
+      usbOptions,
       clients,
       updateSettings,
       galleryList,
@@ -248,9 +359,21 @@ export default {
       newGallery,
       confirmNewGallery,
       removeGallery,
+      clearGallery,
       toDeleteGallery,
+      toClearGallery,
       confirmDelete,
-      removeGalleryConfirmed
+      confirmClear,
+      removeGalleryConfirmed,
+      clearGalleryConfirmed,
+      configureGalleryUsb,
+      configureGalleryUsbConfirmed,
+      showGalleryUsbDialog,
+
+      showCopyGalleryUsbDialog,
+      currentCopyToUsbGallery,
+      copyGalleryUsb,
+      copyGalleryUsbConfirmed,
 
 
     }

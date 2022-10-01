@@ -2,11 +2,13 @@ var fs = require('fs');
 // var gphoto2 = require('gphoto2');
 // var GPhoto = new gphoto2.GPhoto2();
 const pathUtil = require('path')
-const config = require('nconf')
+const nconf = require('nconf')
 const express = require('express')
 const cors = require('cors')
 const http = require('http')
+const usb = require('./usb')
 const app = express()
+
 
 const corsOptions = {
   origin: '*',
@@ -31,7 +33,7 @@ const ioServer = new socketServer(httpServer, {
 })
 
 const configFile = 'config/default.json'
-
+const config = new nconf.Provider()
 
 config.file({file: configFile})
 
@@ -55,9 +57,41 @@ camera.setup(config)
 
 
 
+usb.startMonitoring()
+
+
+let availableUsbDevices = []
+usb.on('update', async (currentUsbDevices) => {
+  const usbConfig = new nconf.Provider()
+  usbConfig.file({file: 'config/usb.json'})
+  availableUsbDevices = currentUsbDevices
+  console.log("change!", currentUsbDevices)
+  for(const [dev, usbConf] of Object.entries(usbConfig)) {
+    const usbDeviceAlive = currentUsbDevices.find(cud => cud.dev === dev)
+    if(usbDeviceAlive) {
+      usbConfig[dev].device = usbDeviceAlive
+    }else{
+      delete usbConfig[dev]
+    }
+  }
+  await gallery.removeUsbConfigFromGallery(currentUsbDevices)
+  config.set('usb', usbConfig)
+  config.save()
+
+
+  const defaultConfig = config.get()
+  defaultConfig.availableUsb = availableUsbDevices
+  ioServer.emit('receiveSettings', defaultConfig)
+  ioServer.emit('receiveGallery', {list: await gallery.list()})
+
+
+})
+
+
+
 let cameraAliveCheck = true
 let cameraFound = false
-cameraAlive =  async () => {
+cameraAliveService =  async () => {
   if(!cameraAliveCheck) return
   const cameraSetup = await camera.setup(config)
   console.log(cameraSetup)
@@ -81,12 +115,12 @@ cameraAlive =  async () => {
     console.log("broadcast cameraOK")
   }
 }
-let cameraAliveInterval = setInterval(cameraAlive, 5000)
-cameraAlive()
+let cameraAliveInterval = setInterval(cameraAliveService, 5000)
+cameraAliveService()
 
+const clientList = []
 ioServer.on('connection', (socket) => {
-
-  console.log('a user connected', socket)
+  clientList.push(socket)
   socket.emit('clientStatus', {type: "success", message: 'Connected to Photobooth'})
 
   socket.on('config', (arg) => {
@@ -99,7 +133,9 @@ ioServer.on('connection', (socket) => {
 
   socket.on('requestSettings', (arg) => {
     console.log("settings requested")
-    socket.emit('receiveSettings', config.get())
+    const defaultConfig = config.get()
+    defaultConfig.availableUsb = availableUsbDevices
+    socket.emit('receiveSettings', defaultConfig)
   })
   socket.on('sendSettings', (arg) => {
     console.log("settings sent", {arg})
@@ -125,6 +161,7 @@ ioServer.on('connection', (socket) => {
   })
 
   socket.on('addGallery', async (newGallery) =>  {
+    console.log({newGallery})
     await gallery.setGallery(newGallery)
     socket.emit('addGallerySuccess')
   })
@@ -135,6 +172,36 @@ ioServer.on('connection', (socket) => {
       socket.emit('removeGallerySuccess')
     }else{
       socket.emit('removeGalleryFailed')
+    }
+  })
+
+  socket.on('clearGallery', async (oldGallery) => {
+    console.log("clearGallery")
+    const clearComplete = await gallery.clearGallery(oldGallery)
+    if(clearComplete) {
+      socket.emit('clearGallerySuccess')
+    }else{
+      socket.emit('clearGalleryFailed')
+    }
+  })
+
+  socket.on('setGalleryUsbTarget', async ({galleryTarget, usbTarget}) => {
+    console.log({galleryTarget, usbTarget})
+    const setComplete = await gallery.setGalleryUsb(galleryTarget, usbTarget)
+    if(setComplete) {
+      socket.emit('setGalleryUsbTargetSuccess')
+    }else{
+      socket.emit('setGalleryUsbTargetFailed')
+    }
+  })
+
+  socket.on('copyGalleryToUsbTarget', async ({galleryTarget, usbTarget}) => {
+    console.log({galleryTarget, usbTarget})
+    const setComplete = await gallery.copyGalleryToUsb(galleryTarget, usbTarget)
+    if(setComplete) {
+      socket.emit('setGalleryUsbTargetSuccess')
+    }else{
+      socket.emit('setGalleryUsbTargetFailed')
     }
   })
 
@@ -155,7 +222,7 @@ ioServer.on('connection', (socket) => {
     console.log('a client send trigger event')
     console.log('send show countdown to everyone')
     ioServer.emit('countdown', {countdown: config.get('camera:countdown')})
-    const countdownTime= parseInt(config.get('camera:countdown') * 1000)
+    const countdownTime= parseInt(config.get('camera:countdown')) * 1000
     const countdownTimeWithDelay = (parseInt(config.get('camera:countdown')) * 1000) + parseInt(config.get('camera:triggerDelay'))
     console.log('Wait Milliseconds before trigger:', countdownTimeWithDelay)
     setTimeout(async () => {
@@ -169,6 +236,7 @@ ioServer.on('connection', (socket) => {
       if(pictureTaken) {
         console.log("Picture was taken!")
         camera.compressPreview(picture).then( (preview) => {
+          gallery.add(picture).then(() => {ioServer.emit('gallery', {type: 'update'})})
           console.log("send preview")
           ioServer.emit('preview', {imagePath: preview, path: options.root, previewTimout: config.get('camera:previewTimeout')})
           setTimeout( () => {
@@ -180,7 +248,6 @@ ioServer.on('connection', (socket) => {
           ioServer.emit('setClientMode')
           triggerInProgress = false
         })
-        gallery.add(picture).then(() => {ioServer.emit('gallery', {type: 'update'})})
       }else{
         socket.emit('clientStatus', {type: 'error', message: 'Es liegt ein Fehler mit der Kamera vor, bitte Fotografen kontaktieren.'})
         ioServer.emit('setClientMode')
@@ -192,7 +259,7 @@ ioServer.on('connection', (socket) => {
       ioServer.emit('countdownEnd' )
 
       clearInterval(cameraAliveInterval)
-      cameraAliveInterval = setInterval(cameraAlive, 5000)
+      cameraAliveInterval = setInterval(cameraAliveService, 5000)
       cameraAliveCheck = true
     }, countdownTime)
     //Wenn der Trigger gedrückt wird, müssen alle Clients den Befehl bekommen einen Countdown anzuzeigen: camera:countdown (s) z.B. 3, 2, 1
@@ -301,22 +368,6 @@ app.use(express.static('static/frontend', {
 app.use(express.static('/gallery', {
   maxAge: '1000' // uses milliseconds per docs
 }))
-
-app.get('/shoot', async (req, res) => {
-  const {pictureTaken, picture} = await camera.takePicture()
-  const path = require('path')
-  const options = {
-    root: pathUtil.join(__dirname)
-  }
-  if(pictureTaken) {
-    res.sendFile(picture, options)
-  }else{
-    res.send(picture)
-  }
-  // fs.renameSync(picture, `./gallery/${picture}`)
-})
-
-
 
 
 httpServer.listen(port, () => {

@@ -142,7 +142,7 @@ export default {
 
     const devCount = ref(0)
     const { devMode } = storeToRefs(pageState)
-    const maxCount = 30
+    const maxCount = 15
     const caption = ref(`Noch ${maxCount - devCount.value} tippen für Einstellungen`)
 
     const resetDevCount = debounce(() => {
