@@ -1,6 +1,6 @@
 <template>
   <div>
-    Speicherverbrauch
+    <b>Speicherverbrauch</b>
     <q-list>
       <q-item>
       <q-item-section>
@@ -33,7 +33,7 @@
         {{storeDevice.storage[2]}}
       </q-item-section>
       <q-item-section>
-        <q-linear-progress size="25px" :value="storeDevice.storage[3]" :color="storageColorsGetter(storeDevice.storage[3])">
+        <q-linear-progress size="25px" :value="percentageToInt(storeDevice.storage[3])/100" :color="storageColorsGetter(storeDevice.storage[3])">
           <div class="absolute-full flex flex-center">
             <q-badge color="white" :text-color="storageColorsGetter(storeDevice.storage[3])" :label="storeDevice.storage[3]" />
           </div>
@@ -54,9 +54,12 @@ export default {
   setup() {
     const settingsStore = useSettingsStore()
     const {serverStatus} = storeToRefs(settingsStore)
+    const percentageToInt = (percentageString ) => {
+      return parseInt(percentageString.replace(/\D/, ''))
+    }
     const storageColorsGetter = ( value ) => {
       const colors = {50: "green", 75: "yellow-8", 90: "red"}
-      const intValue = parseInt(value.replace(/\D/, ''))
+      const intValue = percentageToInt(value)
       for(const key of Object.keys(colors) ) {
          if (intValue < key) {
            return colors[key]
@@ -67,7 +70,8 @@ export default {
 
     return {
       serverStatus,
-      storageColorsGetter
+      storageColorsGetter,
+      percentageToInt
     }
   }
 }

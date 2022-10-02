@@ -9,6 +9,8 @@ const storageService = {
   usbConf: null,
   oldStorageState: [],
   eventListener: [],
+  storageWarnings: [],
+  storageErrors: [],
 
   constructor () {
     this.usbConf = new nconf.Provider()
@@ -50,12 +52,32 @@ const storageService = {
 
       //diff with oldStorageState
       const diffHappened = await this.diff(devices)
+      //Trigger update event on change only? send new Data
+
       if(diffHappened){
         this.trigger('update', devices)
       }
       this.oldStorageState = devices
 
-      //Trigger update event on change only? send new Data
+      this.storageWarnings = []
+      this.storageErrors = []
+      for(const device of devices) {
+        const storagePercentage = parseInt(device.storage[3].replace(/\D/, ''))
+        //if Storage device is going to get full send warning
+        if(storagePercentage>=50 && storagePercentage < 75 ){
+          this.storageWarnings.push(device)
+          //if storage device is full send error
+        }else if(storagePercentage >= 75) {
+          this.storageErrors.push(device)
+        }
+      }
+      if(this.storageWarnings.length > 0)
+        this.trigger('warning', this.storageWarnings)
+      if(this.storageErrors.length > 0)
+        this.trigger('error', this.storageErrors)
+
+
+
 
     }catch(err){
       console.error(err)

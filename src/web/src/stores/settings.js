@@ -22,6 +22,41 @@ export const useSettingsStore = defineStore('settings', {
         console.log("serverstatus", {data})
         this.serverStatus = data
       })
+      this.socketStore.on('storageWarning', (data) => {
+        console.log("storageWarning", {data})
+          if(currentRoute === '/client') {
+
+          }else {
+            Notify.create({
+              type: 'warning',
+              message: data.map((d) => `${d.dev} (${d.mount}) ist bereits halb voll`).join('<br>'),
+              html: true,
+              caption: false,
+              badgeStyle: "opacity: 0"
+            })
+          }
+      })
+      this.socketStore.on('storageError', (data) => {
+        console.log("storageError", {data})
+        const currentRoute = this.router.options.history.location
+        if(currentRoute === '/client') {
+          Notify.create({
+            type: 'negative',
+            message: data.map((d) => `Speicherplatz fast voll - Bitte Fotografen bescheid geben`).join('<br>'),
+            html: true,
+            caption: false,
+            badgeStyle: "opacity: 0"
+          })
+        }else {
+          Notify.create({
+            type: 'negative',
+            message: data.map((d) => `${d.dev} (${d.mount}) ist bald voll`).join('<br>'),
+            html: true,
+            caption: false,
+            badgeStyle: "opacity: 0"
+          })
+        }
+      })
 
       this.requestSettings()
     },

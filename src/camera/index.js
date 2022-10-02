@@ -96,6 +96,13 @@ storage.on('update', (storageData) => {
   ioServer.emit('serverStatus', serverStatusData)
 })
 
+storage.on('warning', (storageData) => {
+  ioServer.emit('storageWarning', storageData)
+})
+storage.on('error', (storageData) => {
+  ioServer.emit('storageError', storageData)
+})
+
 const serverStatusData = {
   cameraFound: '',
   storageUsage: [
@@ -127,16 +134,19 @@ cameraAliveService =  async () => {
     cameraFound = false
     console.log("broadcast noCamera")
   }else {
-    if (cameraSetup.detectOutput[0]) {
+    if (cameraSetup.detectOutput[0] && cameraFound !== true ) {
       const cameraNameMatch = cameraSetup.detectOutput[0].match(/^[\w ]+(\t|[  ]{2})/)
       console.log(cameraNameMatch[0].trim())
       serverStatusData.cameraFound = cameraNameMatch[0].trim()
+      ioServer.emit('serverStatus', serverStatusData)
     }
     cameraFound = true
     ioServer.emit('cameraOK')
     console.log("broadcast cameraOK")
   }
-  ioServer.emit('serverStatus', serverStatusData)
+  if(cameraFound !== true) {
+    ioServer.emit('serverStatus', serverStatusData)
+  }
 }
 let cameraAliveInterval = setInterval(cameraAliveService, 5000)
 cameraAliveService()
@@ -147,6 +157,13 @@ ioServer.on('connection', (socket) => {
   socket.emit('clientStatus', {type: "success", message: 'Connected to Photobooth'})
   //Send Server Status once and recieve it from now through eventupdates by server side (broadcast see above)
   socket.emit('serverStatus', serverStatusData)
+
+  if(storage.storageWarnings.length > 0) {
+    socket.emit('storageWarning', storage.storageWarnings)
+  }
+  if(storage.storageErrors.length > 0) {
+    socket.emit('storageError', storage.storageErrors)
+  }
 
   socket.on('config', (arg) => {
     for(const [configKey, configValue] of Object.entries(arg)) {

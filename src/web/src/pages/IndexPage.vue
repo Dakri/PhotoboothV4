@@ -3,13 +3,31 @@
     <div class="q-gutter-lg q-pa-lg">
       <q-card>
         <q-card-section>
-          <h5>Bitte beachten</h5>
+          <b>Erkannte Kamera</b>
+          <q-list>
+            <q-item v-if="serverStatus.cameraFound && serverStatus.cameraFound!=='none'">
+              {{serverStatus.cameraFound}}
+            </q-item>
+            <q-item v-else class="bg-negative text-white" >
+              <b>ACHTUNG KEINE KAMERA ERKANNT</b>
+            </q-item>
+          </q-list>
+        </q-card-section>
+      </q-card>
+      <q-card>
+        <q-card-section>
+          <storage-used></storage-used>
+        </q-card-section>
+      </q-card>
+      <q-card>
+        <q-card-section>
+          <b>Bitte beachten</b>
           <q-list>
             <q-item>
               <q-item-section>
-              <q-label>
-                Kamera Konfiguration
-              </q-label>
+                <q-label>
+                  Kamera Konfiguration
+                </q-label>
                 <ul>
                   <li>Belichtung / Blitz einstellen</li>
                   <li>Fokus setzen und auf manuell stellen</li>
@@ -41,11 +59,6 @@
           </q-list>
         </q-card-section>
       </q-card>
-      <q-card>
-        <q-card-section>
-          <storage-used></storage-used>
-        </q-card-section>
-      </q-card>
     </div>
   </q-page>
 </template>
@@ -56,16 +69,21 @@ import { ref, computed } from 'vue'
 import { useSocketStore } from "stores/socket";
 import { format } from 'echarts'
 import StorageUsed from "components/storage/storageUsed";
+import {useSettingsStore} from "stores/settings";
+import {storeToRefs} from "pinia";
 
 export default {
   name: 'IndexPage',
   components: {StorageUsed  },
   setup() {
     const socket = useSocketStore()
+    const settingsStore = useSettingsStore()
+    const {serverStatus} = storeToRefs(settingsStore)
 
 
     return {
       socket,
+      serverStatus
     }
   }
 }
