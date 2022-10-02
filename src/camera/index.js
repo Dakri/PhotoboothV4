@@ -7,6 +7,7 @@ const express = require('express')
 const cors = require('cors')
 const http = require('http')
 const usb = require('./usb')
+const storage = require('./storage')
 const app = express()
 
 
@@ -88,7 +89,19 @@ usb.on('update', async (currentUsbDevices) => {
 })
 
 
+storage.startMonitoring()
+storage.on('update', (storageData) => {
+  console.log("storage changed", storageData)
+  serverStatusData.storageUsage = storageData
+  ioServer.emit('serverStatus', serverStatusData)
+})
 
+const serverStatusData = {
+  cameraFound: '',
+  storageUsage: [
+  ]
+
+}
 let cameraAliveCheck = true
 let cameraFound = false
 cameraAliveService =  async () => {
@@ -96,24 +109,34 @@ cameraAliveService =  async () => {
   const cameraSetup = await camera.setup(config)
   console.log(cameraSetup)
   if(cameraSetup.detectError) {
+
+    serverStatusData.cameraFound = 'none'
     ioServer.emit('noCamera', {message: cameraSetup.detectError})
     cameraFound = false
     console.log("broadcast noCamera")
   }else
   if(cameraSetup.capturetargetError) {
+    serverStatusData.cameraFound = 'none'
     ioServer.emit('cameraError', {message: cameraSetup.capturetargetError})
     cameraFound = false
     console.log("broadcast cameraError")
   }else
   if(cameraSetup.detectOutput.length <= 0) {
+    serverStatusData.cameraFound = 'none'
     ioServer.emit('noCamera')
     cameraFound = false
     console.log("broadcast noCamera")
   }else {
+    if (cameraSetup.detectOutput[0]) {
+      const cameraNameMatch = cameraSetup.detectOutput[0].match(/^[\w ]+(\t|[  ]{2})/)
+      console.log(cameraNameMatch[0].trim())
+      serverStatusData.cameraFound = cameraNameMatch[0].trim()
+    }
     cameraFound = true
     ioServer.emit('cameraOK')
     console.log("broadcast cameraOK")
   }
+  ioServer.emit('serverStatus', serverStatusData)
 }
 let cameraAliveInterval = setInterval(cameraAliveService, 5000)
 cameraAliveService()
@@ -122,6 +145,8 @@ const clientList = []
 ioServer.on('connection', (socket) => {
   clientList.push(socket)
   socket.emit('clientStatus', {type: "success", message: 'Connected to Photobooth'})
+  //Send Server Status once and recieve it from now through eventupdates by server side (broadcast see above)
+  socket.emit('serverStatus', serverStatusData)
 
   socket.on('config', (arg) => {
     for(const [configKey, configValue] of Object.entries(arg)) {

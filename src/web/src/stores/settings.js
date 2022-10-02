@@ -6,6 +6,7 @@ export const useSettingsStore = defineStore('settings', {
   state: () => {
     return {
       settings: {},
+      serverStatus: {},
       socketStore: useSocketStore()
     }
   },
@@ -16,6 +17,10 @@ export const useSettingsStore = defineStore('settings', {
       })
       this.socketStore.on('savedSettings', (data) => {
         this.savedSettings(data)
+      })
+      this.socketStore.on('serverStatus', (data) => {
+        console.log("serverstatus", {data})
+        this.serverStatus = data
       })
 
       this.requestSettings()

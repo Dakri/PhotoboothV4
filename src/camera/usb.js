@@ -3,7 +3,6 @@ const nconf = require('nconf')
 const fs = require("fs");
 const path = require("path")
 const usbConf = new nconf.Provider()
-usbConf.file({file: 'config/usb.json'})
 
 module.exports = {
 
@@ -15,6 +14,7 @@ module.exports = {
 
   async startMonitoring() {
     try {
+      usbConf.file({file: 'config/usb.json'})
       const usbDevicesList = await exec('fdisk -l | grep -iE  "^/dev/sd[^0-9]+[0-9]+"')
       const usbDevices = []
       for (const usbDevice of usbDevicesList[0].split(/\n/)) {
@@ -48,11 +48,11 @@ module.exports = {
       }
 
       const diff = this.usbDiff(usbDevices)
+      usbConf.set('devices', usbDevices)
+      usbConf.save()
       if (diff) {
         // console.log("diff...")
         this.trigger('update', usbDevices)
-        usbConf.set('devices', usbDevices)
-        usbConf.save()
       }
       this.usbDevicesState = usbDevices
       setTimeout(() => {

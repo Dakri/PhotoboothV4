@@ -41,6 +41,11 @@
           </q-list>
         </q-card-section>
       </q-card>
+      <q-card>
+        <q-card-section>
+          <storage-used></storage-used>
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
@@ -50,10 +55,11 @@ import { defineComponent } from 'vue'
 import { ref, computed } from 'vue'
 import { useSocketStore } from "stores/socket";
 import { format } from 'echarts'
+import StorageUsed from "components/storage/storageUsed";
 
 export default {
   name: 'IndexPage',
-  components: {  },
+  components: {StorageUsed  },
   setup() {
     const socket = useSocketStore()
 

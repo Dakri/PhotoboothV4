@@ -248,6 +248,25 @@ module.exports =  {
     }
   },
 
+  getGalleryObject: async function (gallerySettings) {
+    if(gallerySettings) {
+      galleryStore.file({file: 'config/gallery.json'})
+      const id = this.buildGalleryId(gallerySettings)
+      return {id, galleryObject: galleryStore.get(`gallery:${id}`)}
+    }
+    return false
+  },
+
+  saveGalleryObjectConfig: async function (galleryObject) {
+    if(galleryObject.id) {
+      galleryStore.file({file: 'config/gallery.json'})
+      galleryStore.set(`gallery:${galleryObject.id}`, galleryObject)
+      galleryStore.save()
+      return true
+    }
+    return false
+  },
+
   setGallery: async function (newGallery) {
     galleryStore.file({file: 'config/gallery.json'})
     const list = galleryStore.get('list')
@@ -278,11 +297,9 @@ module.exports =  {
     if(!galleryTarget || !usbtarget) {
       return false
     }
-    galleryStore.file({file: 'config/gallery.json'})
-    const id = this.buildGalleryId(galleryTarget)
+    const {id, galleryObject} = await this.getGalleryObject(galleryTarget)
     galleryObject.usbTarget = usbtarget
-    galleryStore.set(`gallery:${id}`, galleryObject)
-    galleryStore.save()
+    await this.saveGalleryObjectConfig(galleryObject)
 
   },
 
