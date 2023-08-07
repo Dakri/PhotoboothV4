@@ -208,10 +208,10 @@ module.exports =  {
     const usbPath = this.buildGalleryUsbPath(gallerySettings)
     const galleryPath = `/gallery/${galleryIndex}`
 
-    const targetJpgDir = `/gallery/${galleryIndex}/DCIM/jpg`
-    const targetRawDir = `/gallery/${galleryIndex}/DCIM/raw`
-    const targetThumbDir = `/gallery/${galleryIndex}/thumbnails`
-    const targetPreviewDir = `/gallery/${galleryIndex}/preview`
+    const targetJpgDir = `${galleryPath}/DCIM/jpg`
+    const targetRawDir = `${galleryPath}/DCIM/raw`
+    const targetThumbDir = `${galleryPath}/thumbnails`
+    const targetPreviewDir = `${galleryPath}/preview`
 
     const targetUsbDir = (usbPath)?usbPath:false
 
@@ -235,11 +235,11 @@ module.exports =  {
     }
 
     if(targetUsbDir) {
-      if (!fs.existsSync(`${targetUsbDir}/${targetJpgDir}`)) {
-        fs.mkdirSync(`${targetUsbDir}/${targetJpgDir}`, {recursive: true})
+      if (!fs.existsSync(`${targetUsbDir}${targetJpgDir}`)) {
+        fs.mkdirSync(`${targetUsbDir}${targetJpgDir}`, {recursive: true})
       }
-      if (!fs.existsSync(`${targetUsbDir}/${targetRawDir}`)) {
-        fs.mkdirSync(`${targetUsbDir}/${targetRawDir}`, {recursive: true})
+      if (!fs.existsSync(`${targetUsbDir}${targetRawDir}`)) {
+        fs.mkdirSync(`${targetUsbDir}${targetRawDir}`, {recursive: true})
       }
     }
 

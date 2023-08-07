@@ -15,7 +15,12 @@ module.exports = {
   async startMonitoring() {
     try {
       usbConf.file({file: 'config/usb.json'})
-      const usbDevicesList = await exec('fdisk -l | grep -iE  "^/dev/sd[^0-9]+[0-9]+"')
+      let usbDevicesList = [""];
+      try{
+       usbDevicesList = await exec('fdisk -l | grep -iE  "^/dev/sd[^0-9]+[0-9]+"')
+      }catch(err){
+        
+      }
       const usbDevices = []
       for (const usbDevice of usbDevicesList[0].split(/\n/)) {
         const usbDataMatch = usbDevice.match(/(\/dev\/sd\D+\d+).* ([\d\.]+[GTM]).*/i)

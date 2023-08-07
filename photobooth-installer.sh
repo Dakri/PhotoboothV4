@@ -1,13 +1,15 @@
-sudo apt update
-sudo apt upgrade -y
+#sudo apt update
+#sudo apt upgrade -y
 
-sudo apt install -y vim
+#sudo apt install -y vim
+#
+#rfkill unblock 0
+#rfkill unblock 1
 
-rfkill unblock 0
-rfkill unblock 1
 
+#sudo apt remove -y rfkill
 
-sudo apt remove -y rfkill
+if false; then
 
 #ENABLE WLAN
 sudo apt install -y dnsmasq hostapd
@@ -62,7 +64,7 @@ wmm_enabled=1
 #WLAN-Verschlüsselung
 auth_algs=1
 wpa=2
-wpa_key_mgmt=WPA-PSK
+pa_key_mgmt=WPA-PSK
 rsn_pairwise=CCMP
 wpa_passphrase=photobooth2022
 " | sudo tee /etc/hostapd/hostapd.conf
@@ -89,6 +91,7 @@ echo "set mouse-=a" >> ~/.vimrc
 echo "set mouse-=a"| sudo tee -a /root/.vimrc
 
 
+exit 0
 
 #INSTALL DOCKER
 curl -fsSL https://get.docker.com -o get-docker.sh
@@ -118,6 +121,8 @@ docker-compose build
 
 cd /home/pi/photobooth/
 docker-compose build
+
+fi
 
 echo "
 [Unit]
@@ -151,7 +156,7 @@ echo "Passwort: Photobooth2022"
 echo "IP: 192.168.1.1"
 echo "Photobooth Website URL: 192.168.1.1:3000"
 echo "-------------------------"
-sleep 20
+#sleep 20
 
-sudo init 6
+#sudo init 6
 

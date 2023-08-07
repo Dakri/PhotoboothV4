@@ -64,7 +64,11 @@ usb.startMonitoring()
 let availableUsbDevices = []
 usb.on('update', async (currentUsbDevices) => {
   const usbConfig = new nconf.Provider()
-  usbConfig.file({file: 'config/usb.json'})
+  try{
+    usbConfig.file({file: 'config/usb.json'})
+  }catch (err) {
+    fs.writeFileSync('config/usb.json', JSON.stringify({devices: []}))
+  }
   availableUsbDevices = currentUsbDevices
   console.log("change!", currentUsbDevices)
   for(const [dev, usbConf] of Object.entries(usbConfig)) {

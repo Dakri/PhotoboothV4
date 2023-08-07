@@ -1,7 +1,17 @@
 {
   "list": [
+    "098f6bcd4621d373cade4e832627b4f6"
   ],
   "gallery": {
+    "098f6bcd4621d373cade4e832627b4f6": {
+      "name": "Test",
+      "photos": 0,
+      "storedOnUSB": 0,
+      "usbTarget": null,
+      "active": null,
+      "usb": "",
+      "id": "098f6bcd4621d373cade4e832627b4f6"
+    }
   },
-  "activeGallery": ""
+  "activeGallery": "098f6bcd4621d373cade4e832627b4f6"
 }

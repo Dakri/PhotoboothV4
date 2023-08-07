@@ -29,6 +29,7 @@
                   Kamera Konfiguration
                 </q-label>
                 <ul>
+                  <li>Kamera auf Raw + JPG stellen</li>
                   <li>Belichtung / Blitz einstellen</li>
                   <li>Fokus setzen und auf manuell stellen</li>
                 </ul>

@@ -39,6 +39,7 @@ const storageService = {
                 dfMatch = dfValuesSplitted.slice(1,5)
               }
             }
+            
             if(dfMatch) {
               device.storage = dfMatch
             }else{
@@ -57,6 +58,7 @@ const storageService = {
       if(diffHappened){
         this.trigger('update', devices)
       }
+
       this.oldStorageState = devices
 
       this.storageWarnings = []
@@ -92,10 +94,12 @@ const storageService = {
 
   async diff(storageState)  {
     const checks = []
+
     for(let i = 0; i < this.oldStorageState.length; i++ ) {
       if(
         this.oldStorageState[i] && storageState[i] &&
         this.oldStorageState[i].dev === storageState[i].dev &&
+        this.oldStorageState[i].storage &&
         this.oldStorageState[i].storage.join('.') === storageState[i].storage.join('.') &&
         this.oldStorageState[i].mount === storageState[i].mount) {
         checks.push(true)
