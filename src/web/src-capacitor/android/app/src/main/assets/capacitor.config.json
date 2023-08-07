@@ -1,7 +1,0 @@
-{
-  "appId": "org.dpeters.photobooth.app",
-  "appName": "Photobooth V4",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www"
-}
