@@ -4,7 +4,7 @@
       "@babel/preset-env",
       {
         "targets": {
-          "safari": "9"
+          "safari": "8"
         }
       }
     ]

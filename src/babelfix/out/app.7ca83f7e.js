@@ -1,5 +1,6 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 (function () {
   "use strict";
 
@@ -673,11 +674,11 @@
     };
   }(), function () {
     n.g = function () {
-      if ("object" === typeof globalThis) return globalThis;
+      if ("object" === (typeof globalThis === "undefined" ? "undefined" : _typeof(globalThis))) return globalThis;
       try {
         return this || new Function("return this")();
       } catch (e) {
-        if ("object" === typeof window) return window;
+        if ("object" === (typeof window === "undefined" ? "undefined" : _typeof(window))) return window;
       }
     }();
   }(), function () {
