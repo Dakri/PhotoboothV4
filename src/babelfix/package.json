@@ -5,6 +5,7 @@
   "main": "vendor.93156793.js",
   "scripts": {
     "build": "npx babel vendor.93156793.js --out-file out/vendor.93156793.js",
+    "buildapp": "npx babel *.js -d out/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
