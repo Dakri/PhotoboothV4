@@ -27,16 +27,22 @@ export default defineComponent({
 
   setup() {
 
-    const socket = useSocketStore()
-    socket.connect()
-    const settings = useSettingsStore()
-    settings.initSocket()
-    const gallery = useGalleryStore()
-    gallery.initSocket()
+    let socket, settings, gallery, pageStore,serverSearch;
+    try {
+      socket = useSocketStore()
+      socket.connect()
+      settings = useSettingsStore()
+      settings.initSocket()
+      gallery = useGalleryStore()
+      gallery.initSocket()
 
-    const pageStore = usePageStore()
-    const {serverSearch} = storeToRefs(pageStore)
+      pageStore = usePageStore()
+      const {serverSearchExp} = storeToRefs(pageStore)
+      serverSearch = serverSearchExp
 
+    }catch(error) {
+      document.write(error.message)
+    }
 
     return {
       socket,
