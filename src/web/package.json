@@ -34,22 +34,22 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
+    "@quasar/app-webpack": "^3.0.0",
     "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^9.0.0",
     "eslint-webpack-plugin": "^3.1.1",
-    "eslint-config-prettier": "^8.1.0",
-    "prettier": "^2.5.1",
-    "@quasar/app-webpack": "^3.0.0"
+    "prettier": "^2.5.1"
   },
   "browserslist": [
     "last 10 Chrome versions",
     "last 10 Firefox versions",
     "last 4 Edge versions",
-    "last 16 Safari versions",
+    "last 26 Safari versions",
     "last 8 Android versions",
     "last 8 ChromeAndroid versions",
     "last 8 FirefoxAndroid versions",
-    "last 18 iOS versions",
+    "last 28 iOS versions",
     "last 5 Opera versions"
   ],
   "engines": {

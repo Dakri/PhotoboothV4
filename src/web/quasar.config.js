@@ -54,14 +54,33 @@ module.exports = configure(function (ctx) {
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
-      // transpile: false,
+      transpile: true,
       publicPath: '/',
       distDir: '../camera/static/frontend',
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).
       // Applies only if "transpile" is set to true.
-      // transpileDependencies: [],
+       transpileDependencies: [
+          "@quasar/extras",
+          "@vueuse/core",
+          "animate.css",
+          "axios",
+          "config",
+          "core-js",
+          "cors",
+          "echarts",
+          "multicast-service-discovery",
+          "pinia",
+          "quasar",
+          "socket.io-client",
+          "vue",
+          "vue-easy-lightbox",
+          "vue-router",
+          "vue3-echarts-v3"
+
+
+       ],
 
       // rtl: true, // https://quasar.dev/options/rtl-support
       // preloadChunks: true,
