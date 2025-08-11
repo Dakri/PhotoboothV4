@@ -9,76 +9,11 @@
 
 #sudo apt remove -y rfkill
 
-if false; then
 
-#ENABLE WLAN
-sudo apt install -y dnsmasq hostapd
-sudo echo "
-      interface wlan0
-      static ip_address=192.168.1.1/24
-      nohook wpa_supplicant" | sudo tee /etc/dhcpcd.conf
-
-sudo mv /etc/dnsmasq.conf /etc/dnsmasq.bak
-
-sudo echo "
-allow-hotplug wlan0
-iface wlan0 inet static
-
-auto eth0
-allow-hotplug eth0
-iface eth0 inet dhcp" | sudo tee -a /etc/network/interfaces
-
-echo "
-# DHCP-Server aktiv für WLAN-Interface
-interface=wlan0
-
-# DHCP-Server nicht aktiv für bestehendes Netzwerk
-no-dhcp-interface=eth0
-
-# IPv4-Adressbereich und Lease-Time
-dhcp-range=192.168.1.100,192.168.1.200,255.255.255.0,24h
-
-# DNS
-dhcp-option=option:dns-server,192.168.1.1" | sudo tee  /etc/dnsmasq.conf
-
-sudo systemctl restart dhcpcd
-sudo systemctl restart dnsmasq
-sudo systemctl enable dnsmasq
-
-echo "
-#WLAN-Router-Betrieb
-
-#Schnittstelle und Treiber
-interface=wlan0
-#driver=nl80211
-
-#WLAN-Konfiguration
-ssid=Photobooth
-channel=1
-hw_mode=g
-ieee80211n=1
-ieee80211d=1
-country_code=DE
-wmm_enabled=1
-
-#WLAN-Verschlüsselung
-auth_algs=1
-wpa=2
-pa_key_mgmt=WPA-PSK
-rsn_pairwise=CCMP
-wpa_passphrase=photobooth2022
-" | sudo tee /etc/hostapd/hostapd.conf
-
-echo "
- RUN_DAEMON=yes
- DAEMON_CONF=\"/etc/hostapd/hostapd.conf\" " | sudo tee -a /etc/default/hostapd
-
-sudo chmod 600 /etc/hostapd/hostapd.conf
-
-
-sudo systemctl unmask hostapd
-sudo systemctl start hostapd
-sudo systemctl enable hostapd
+nmcli con add type wifi ifname wlan0 con-name ap mode ap ssid Photobooth
+nmcli con modify ap ipv4.method shared ipv4.addresses 192.168.4.1/24
+nmcli con modify ap 802-11-wireless.mode ap 802-11-wireless.band bg
+nmcli con modify ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk "photobooth2022"
 
 sudo echo "net.ipv4.ip_forward=1" > /etc/sysctl.conf
 
@@ -91,38 +26,28 @@ echo "set mouse-=a" >> ~/.vimrc
 echo "set mouse-=a"| sudo tee -a /root/.vimrc
 
 
-exit 0
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/raspbian/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-#INSTALL DOCKER
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/raspbian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
 
-sudo usermod -aG docker pi
-
-########## BEGIN ##########
-sudo sh -eux <<EOF
-# Install newuidmap & newgidmap binaries
-apt-get install -y uidmap
-EOF
-########## END ##########
-
-
-dockerd-rootless-setuptool.sh install
-
-rm -rf get-docker.sh
-
-sudo systemctl enable docker
-
-sudo apt update
-sudo apt install -y docker-compose
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 cd /home/pi/photobooth/docker
-docker-compose build
+docker compose build
 
 cd /home/pi/photobooth/
-docker-compose build
+docker compose build
 
-fi
 
 echo "
 [Unit]
@@ -134,8 +59,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/home/pi/photobooth
-ExecStart=/usr/bin/docker-compose up -d
-ExecStop=/usr/bin/docker-compose down
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
 TimeoutStartSec=0
 
 [Install]
@@ -154,7 +79,7 @@ echo "Wie komm wieder an den PI?"
 echo "Per WLAN: Photobooth"
 echo "Passwort: Photobooth2022"
 echo "IP: 192.168.1.1"
-echo "Photobooth Website URL: 192.168.1.1:3000"
+echo "Photobooth Website URL: 192.168.1.1"
 echo "-------------------------"
 #sleep 20
 
