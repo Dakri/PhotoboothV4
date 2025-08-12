@@ -9,6 +9,8 @@
 
 #sudo apt remove -y rfkill
 
+mkdir gallery/preview -p
+
 rfkill unblock wifi
 
 nmcli radio wifi on
