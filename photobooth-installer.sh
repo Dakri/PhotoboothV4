@@ -9,6 +9,7 @@
 
 #sudo apt remove -y rfkill
 
+rfkill unblock wifi
 
 nmcli radio wifi on
 nmcli con add type wifi ifname wlan0 con-name ap mode ap ssid Photobooth
