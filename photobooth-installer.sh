@@ -10,10 +10,13 @@
 #sudo apt remove -y rfkill
 
 
+nmcli radio wifi on
 nmcli con add type wifi ifname wlan0 con-name ap mode ap ssid Photobooth
-nmcli con modify ap ipv4.method shared ipv4.addresses 192.168.4.1/24
+nmcli con modify ap ipv4.method shared ipv4.addresses 192.168.1.1/24
 nmcli con modify ap 802-11-wireless.mode ap 802-11-wireless.band bg
 nmcli con modify ap wifi-sec.key-mgmt wpa-psk wifi-sec.psk "photobooth2022"
+nmcli con up ap
+nmcli con modify ap connection.autoconnect yes
 
 sudo echo "net.ipv4.ip_forward=1" > /etc/sysctl.conf
 
@@ -43,7 +46,9 @@ sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 cd /home/pi/photobooth/docker
-docker compose build
+docker build -t dpeters/photobooth_base ./base
+chmod a+x ./gphoto/epeg/autogen.sh
+docker build -t dpeters/photobooth_gphoto ./gphoto
 
 cd /home/pi/photobooth/
 docker compose build
