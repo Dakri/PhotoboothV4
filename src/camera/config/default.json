@@ -11,13 +11,14 @@
   },
   "camera": {
     "triggerDelay": -400,
-    "countdown": 3,
-    "previewTimeout": 5,
+    "countdown": "3",
+    "previewTimeout": "8",
     "storageTarget": 0,
     "previewResolution": {
       "w": "1280px"
     }
   },
   "usb": {},
-  "clients": {}
+  "clients": {},
+  "availableUsb": []
 }

@@ -58,7 +58,7 @@ camera.setup(config)
 
 
 
-usb.startMonitoring()
+//usb.startMonitoring()
 
 
 let availableUsbDevices = []
@@ -93,9 +93,9 @@ usb.on('update', async (currentUsbDevices) => {
 })
 
 
-storage.startMonitoring()
+//storage.startMonitoring()
 storage.on('update', (storageData) => {
-  console.log("storage changed", storageData)
+  //console.log("storage changed", storageData)
   serverStatusData.storageUsage = storageData
   ioServer.emit('serverStatus', serverStatusData)
 })

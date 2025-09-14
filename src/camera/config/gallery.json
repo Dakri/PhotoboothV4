@@ -1,17 +1,27 @@
 {
   "list": [
-    "098f6bcd4621d373cade4e832627b4f6"
+    "098f6bcd4621d373cade4e832627b4f6",
+    "dba3d0861f6a4d10807e8d6ad78691e8"
   ],
   "gallery": {
     "098f6bcd4621d373cade4e832627b4f6": {
       "name": "Test",
-      "photos": 0,
+      "photos": 13,
       "storedOnUSB": 0,
       "usbTarget": null,
       "active": null,
       "usb": "",
       "id": "098f6bcd4621d373cade4e832627b4f6"
+    },
+    "dba3d0861f6a4d10807e8d6ad78691e8": {
+      "name": "Einschulung ",
+      "photos": 677,
+      "storedOnUSB": 0,
+      "usbTarget": null,
+      "active": null,
+      "usb": "",
+      "id": "dba3d0861f6a4d10807e8d6ad78691e8"
     }
   },
-  "activeGallery": "098f6bcd4621d373cade4e832627b4f6"
+  "activeGallery": "dba3d0861f6a4d10807e8d6ad78691e8"
 }

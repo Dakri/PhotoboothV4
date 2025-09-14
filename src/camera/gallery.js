@@ -82,6 +82,8 @@ module.exports =  {
     const copyJobs = []
     const copyUSBJobs = []
 
+    console.log("currentFilesDebug", currentFiles);
+
     if(gallery && currentFiles.length > 0) {
       const {targetThumbDir, targetJpgDir, targetPreviewDir, targetRawDir, targetUsbDir} = this.ensureGalleryPaths(gallery)
 
@@ -96,10 +98,11 @@ module.exports =  {
             const thumbnail = await this.compressThumbnail(image)
             copyJobs.push(this.moveFile(thumbnail, `${targetThumbDir}/img${currentFileNumber}.jpg`))
             copyJobs.push(this.moveFile(image, `${targetJpgDir}/img${currentFileNumber}.jpg`).then( () =>{
-              if(!targetUsbDir) return
-              copyUSBJobs.push(this.copyFile(`${targetJpgDir}/img${currentFileNumber}.jpg`, `${targetUsbDir}/${targetJpgDir}/img${currentFileNumber}.jpg`))
+              //if(!targetUsbDir) return
+              //copyUSBJobs.push(this.copyFile(`${targetJpgDir}/img${currentFileNumber}.jpg`, `${targetUsbDir}/${targetJpgDir}/img${currentFileNumber}.jpg`))
             }))
             copyJobs.push(this.copyFile('/gallery/preview/preview.jpg', `${targetPreviewDir}/img${currentFileNumber}.jpg`))
+	   copyJobs.push(this.moveFile('/camera/capt0001.cr2', `${targetRawDir}/img${currentFileNumber}.cr2`)) 
             break;
           default:
             copyJobs.push(this.moveFile(image, `${targetRawDir}/img${currentFileNumber}.${ext}`).then( () =>{

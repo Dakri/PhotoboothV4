@@ -43,7 +43,7 @@ const storageService = {
             if(dfMatch) {
               device.storage = dfMatch
             }else{
-              throw(`No storage device found by path ${device.dev}`)
+              // throw(`No storage device found by path ${device.dev}`)
             }
           }
         }
